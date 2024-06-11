@@ -1,0 +1,30 @@
+---
+- hosts: servers
+
+  vars:
+    docker_image: hello-world
+
+
+  tasks:
+
+    - name: "Install docker image 'hello-world'"
+      shell: sudo docker pull hello-world
+
+    - name: "Copy 'my docker image' service"
+      template:
+        src: my-docker-image.service.j2
+        dest: /usr/lib/systemd/system/my-docker-image.service
+        owner: root
+        mode: 644
+
+    - name: "Restart services"
+      systemd_service:
+        daemon_reload: true
+
+    - name: "Start 'my docker image' service"
+      systemd_service:
+        name: my-docker-image.service
+        state: started
+#        enabled: true
+#
+# также сервис можно добавить в автозагрузку, раскомментировав нужную строку
